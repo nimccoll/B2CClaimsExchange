@@ -15,6 +15,11 @@
 
  <BuildingBlocks>
   <ClaimsSchema>
+    <ClaimType Id="jdrfPassword">
+      <DisplayName>jdrfPassword</DisplayName>
+      <DataType>string</DataType>
+      <UserHelpText/>
+    </ClaimType>
     <ClaimType Id="extension_jdrfConsId">
       <DisplayName>Luminate Online Constituent Id</DisplayName>
       <DataType>string</DataType>
@@ -34,6 +39,16 @@
       <UserInputType>TextBox</UserInputType>
     </ClaimType>
   </ClaimsSchema>
+  <ClaimsTransformations>
+    <ClaimsTransformation Id="CopyNewPassword" TransformationMethod="CopyClaim"> 
+      <InputClaims>
+        <InputClaim ClaimTypeReferenceId="newPassword" TransformationClaimType="inputClaim"/>
+      </InputClaims>
+      <OutputClaims>
+        <OutputClaim ClaimTypeReferenceId="jdrfPassword" TransformationClaimType="outputClaim"/>
+      </OutputClaims>         
+    </ClaimsTransformation>
+  </ClaimsTransformations>
 </BuildingBlocks>
 
   <ClaimsProviders>
@@ -67,6 +82,46 @@
         </TechnicalProfile>
       </TechnicalProfiles>
     </ClaimsProvider>
+
+<ClaimsProvider>
+      <DisplayName>Password Reset with Luminate Online</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="jdrfLocalAccountWritePasswordUsingObjectId">
+          <DisplayName>Change password (username)</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.SelfAssertedAttributeProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <Item Key="ContentDefinitionReferenceId">api.localaccountpasswordreset</Item>
+          </Metadata>
+          <CryptographicKeys>
+            <Key Id="issuer_secret" StorageReferenceId="B2C_1A_TokenSigningKeyContainer" />
+          </CryptographicKeys>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="objectId" />
+  
+          </InputClaims>
+          <OutputClaims>
+            <OutputClaim ClaimTypeReferenceId="newPassword" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="reenterPassword" Required="true" />
+            <OutputClaim ClaimTypeReferenceId="jdrfPassword" />
+          </OutputClaims>
+          <ValidationTechnicalProfiles>
+						<ValidationTechnicalProfile ReferenceId="CopyPassword" />
+            <ValidationTechnicalProfile ReferenceId="AAD-UserWritePasswordUsingObjectId" />
+          </ValidationTechnicalProfiles>
+        </TechnicalProfile>
+
+				<TechnicalProfile Id="CopyPassword">
+					<DisplayName>Copy Password for Luminate Online</DisplayName>
+					<Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.ClaimsTransformationProtocolProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+					<OutputClaims>
+						<OutputClaim ClaimTypeReferenceId="jdrfPassword" />
+					</OutputClaims>
+					<OutputClaimsTransformations>
+						<OutputClaimsTransformation ReferenceId="CopyNewPassword" />
+					</OutputClaimsTransformations>
+				</TechnicalProfile>
+      </TechnicalProfiles>
+</ClaimsProvider>
 
 <ClaimsProvider>
   <DisplayName>REST APIs</DisplayName>
@@ -107,6 +162,26 @@
       <OutputClaims>
         <OutputClaim ClaimTypeReferenceId="extension_jdrfRoutingId" PartnerClaimType="routingId" />
         <OutputClaim ClaimTypeReferenceId="extension_jdrfNonce" PartnerClaimType="nonce" />
+      </OutputClaims>
+      <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
+    </TechnicalProfile>
+    <TechnicalProfile Id="ChangePasswordAPI">
+      <DisplayName>Change Password API</DisplayName>
+      <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.RestfulProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+      <Metadata>
+        <Item Key="ServiceUrl">https://{your function URL}/api/ChangePassword</Item>
+        <Item Key="SendClaimsIn">QueryString</Item>
+        <!-- Set AuthenticationType to Basic or ClientCertificate in production environments -->
+        <Item Key="AuthenticationType">None</Item>
+        <!-- REMOVE the following line in production environments -->
+        <Item Key="AllowInsecureAuthInProduction">true</Item>
+      </Metadata>
+      <InputClaims>
+        <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="userId" />
+        <InputClaim ClaimTypeReferenceId="jdrfPassword" PartnerClaimType="pwd" />
+      </InputClaims>
+      <OutputClaims>
+        <OutputClaim ClaimTypeReferenceId="extension_jdrfConsId" PartnerClaimType="consId" />
       </OutputClaims>
       <UseTechnicalProfileForSessionManagement ReferenceId="SM-Noop" />
     </TechnicalProfile>
@@ -234,6 +309,30 @@
 
         <OrchestrationStep Order="10" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
  
+      </OrchestrationSteps>
+      <ClientDefinition ReferenceId="DefaultWeb" />
+    </UserJourney>
+
+    <UserJourney Id="PasswordReset">
+      <OrchestrationSteps>
+        <OrchestrationStep Order="1" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="PasswordResetUsingEmailAddressExchange" TechnicalProfileReferenceId="LocalAccountDiscoveryUsingEmailAddress" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        <OrchestrationStep Order="2" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="NewCredentials" TechnicalProfileReferenceId="jdrfLocalAccountWritePasswordUsingObjectId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+
+<OrchestrationStep Order="3" Type="ClaimsExchange">
+  <ClaimsExchanges>
+    <ClaimsExchange Id="ChangeLuminateOnlinePassword" TechnicalProfileReferenceId="ChangePasswordAPI" />
+  </ClaimsExchanges>
+</OrchestrationStep>
+
+        <OrchestrationStep Order="4" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
       </OrchestrationSteps>
       <ClientDefinition ReferenceId="DefaultWeb" />
     </UserJourney>

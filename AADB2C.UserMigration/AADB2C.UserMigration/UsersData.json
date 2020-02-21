@@ -1,0 +1,13 @@
+﻿{
+  "userType": "emailAddress",
+  "Users": [
+    {
+      // Local account only
+      "signInName": "someuser@test.com",
+      "displayName": "Some User",
+      "firstName": "Some",
+      "lastName": "User",
+      "password": "Pass!w0rd"
+    }
+  ]
+}
