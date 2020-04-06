@@ -1,9 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿//===============================================================================
+// Microsoft FastTrack for Azure
+// Azure Active Directory B2C User Management Samples
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AADB2C.GraphService
 {
@@ -35,6 +42,9 @@ namespace AADB2C.GraphService
         public IList<string> otherMails { get; set; }
         public string userPrincipalName { get; set; }
 
+        // Custom attributes
+        public string extension_jdrfConsId { get; set; }
+
         public GraphAccountModel() { }
         public GraphAccountModel(
             string tenant,
@@ -46,7 +56,8 @@ namespace AADB2C.GraphService
             string password,
             string displayName,
             string givenName,
-            string surname)
+            string surname,
+            string extension_jdrfConsId)
         {
             // Set the type of the account to be ceate
             AccountType accountType = AccountType.None;
@@ -107,6 +118,7 @@ namespace AADB2C.GraphService
             this.givenName = givenName;
             this.surname = surname;
 
+            this.extension_jdrfConsId = extension_jdrfConsId;
             //if (userType.ToLower() == "username")
             //{
             //    this.strongAuthenticationEmailAddress = email;
@@ -128,12 +140,16 @@ namespace AADB2C.GraphService
         /// </summary>
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            string json = JsonConvert.SerializeObject(this);
+            return json.Replace("extension_jdrfConsId", "extension_c9fd2a89542146eab0d6de579d5036f3_jdrfConsId");
+            //return JsonConvert.SerializeObject(this);
         }
 
         public static GraphAccountModel Parse(string JSON)
         {
-            return JsonConvert.DeserializeObject(JSON, typeof(GraphAccountModel)) as GraphAccountModel;
+            string json = JSON.Replace("extension_c9fd2a89542146eab0d6de579d5036f3_jdrfConsId", "extension_jdrfConsId");
+            return JsonConvert.DeserializeObject(json, typeof(GraphAccountModel)) as GraphAccountModel;
+            //return JsonConvert.DeserializeObject(JSON, typeof(GraphAccountModel)) as GraphAccountModel;
         }
     }
 
@@ -189,6 +205,33 @@ namespace AADB2C.GraphService
         {
             this.passwordProfile = new PasswordProfile(password);
             this.passwordPolicies = "DisablePasswordExpiration,DisableStrongPassword";
+        }
+    }
+
+    public class GraphUserUpdateModel
+    {
+        public string displayName { get; set; }
+        public string givenName { get; set; }
+        public string surname { get; set; }
+        public string extension_jdrfConsId { get; set; }
+
+        public GraphUserUpdateModel() { }
+
+        public GraphUserUpdateModel(string displayName, string givenName, string surname, string extension_jdrfConsId)
+        {
+            this.displayName = displayName;
+            this.givenName = givenName;
+            this.surname = surname;
+            this.extension_jdrfConsId = extension_jdrfConsId;
+        }
+
+        /// <summary>
+        /// Serialize the object into Json string
+        /// </summary>
+        public override string ToString()
+        {
+            string json = JsonConvert.SerializeObject(this);
+            return json.Replace("extension_jdrfConsId", "extension_c9fd2a89542146eab0d6de579d5036f3_jdrfConsId");
         }
     }
 }

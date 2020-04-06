@@ -137,6 +137,7 @@ namespace AADB2C.UserMigration
                     item.displayName,
                     item.firstName,
                     item.lastName,
+                    item.extension_jdrfConsId,
                     false);
 
                 if (success)
@@ -203,6 +204,7 @@ namespace AADB2C.UserMigration
                     item.displayName,
                     item.firstName,
                     item.lastName,
+                    item.extension_jdrfConsId,
                     true);
 
                 //// Create a new customer entity.

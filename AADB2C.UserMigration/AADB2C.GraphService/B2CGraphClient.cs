@@ -1,10 +1,16 @@
-﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
+﻿//===============================================================================
+// Microsoft FastTrack for Azure
+// Azure Active Directory B2C User Management Samples
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -56,7 +62,8 @@ namespace AADB2C.GraphService
                                             string password, 
                                             string displayName, 
                                             string givenName, 
-                                            string surname, 
+                                            string surname,
+                                            string extension_jdrfConsId,
                                             bool generateRandomPassword)
         {
             if (string.IsNullOrEmpty(signInName) && string.IsNullOrEmpty(issuerUserId ))
@@ -84,7 +91,8 @@ namespace AADB2C.GraphService
                                                 password, 
                                                 displayName, 
                                                 givenName, 
-                                                surname);
+                                                surname,
+                                                extension_jdrfConsId);
 
                 // Send the json to Graph API end point
                 await SendGraphRequest("/users/", null, graphUserModel.ToString(), HttpMethod.Post);
@@ -177,6 +185,39 @@ namespace AADB2C.GraphService
             }
         }
 
+        public async Task UpdateUser(string signInName, string displayName, string givenName, string surname, string extension_jdrfConsId)
+        {
+            string JSON = await this.SearcUserBySignInNames(signInName);
+
+            GraphAccounts users = GraphAccounts.Parse(JSON);
+
+            // If user exists
+            if (users != null && users.value != null && users.value.Count == 1)
+            {
+                string user = await SendGraphRequest($"/users/{users.value[0].objectId}", null, null, HttpMethod.Get);
+
+                GraphUserUpdateModel graphUserUpdateModel = new GraphUserUpdateModel(displayName, givenName, surname, extension_jdrfConsId);
+                string json = graphUserUpdateModel.ToString();
+                await SendGraphRequest($"/users/{users.value[0].objectId}", null, json, new HttpMethod("PATCH"));
+            }
+        }
+
+        public async Task<GraphAccountModel> GetUser(string signInName)
+        {
+            GraphAccountModel graphAccountModel = null;
+            string JSON = await this.SearcUserBySignInNames(signInName);
+
+            GraphAccounts users = GraphAccounts.Parse(JSON);
+
+            // If user exists
+            if (users != null && users.value != null && users.value.Count == 1)
+            {
+                string user = await SendGraphRequest($"/users/{users.value[0].objectId}", null, null, HttpMethod.Get);
+                graphAccountModel = GraphAccountModel.Parse(user);
+            }
+
+            return graphAccountModel;
+        }
 
         /// <summary>
         /// Handle Graph user API, support following HTTP methods: GET, POST and PATCH

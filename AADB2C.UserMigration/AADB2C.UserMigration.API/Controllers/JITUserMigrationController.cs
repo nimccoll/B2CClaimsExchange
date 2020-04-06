@@ -72,6 +72,7 @@ namespace AADB2C.UserMigration.API.Controllers
                             DisplayName, 
                             FirstName, 
                             LastName,
+                            "",
                             false);
 
                         // Remove the user entity from migration table

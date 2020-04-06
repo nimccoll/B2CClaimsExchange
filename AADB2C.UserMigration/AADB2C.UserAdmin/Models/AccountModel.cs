@@ -8,19 +8,23 @@
 // LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 // FITNESS FOR A PARTICULAR PURPOSE.
 //===============================================================================
-using Newtonsoft.Json;
-using System.Collections.Generic;
-
-namespace AADB2C.GraphService
+namespace AADB2C.UserAdmin.Models
 {
-    public class GraphAccounts
+    public class AccountModel
     {
-        public string odatametadata { get; set; }
-        public List<GraphAccountModel> value { get; set; }
+        // Local account attributes
+        public string signInName { set; get; }
+        public string password { set; get; }
 
-        public static GraphAccounts Parse(string JSON)
-        {
-            return JsonConvert.DeserializeObject(JSON.Replace("odata.metadata", "odatametadata"), typeof(GraphAccounts)) as GraphAccounts;
-        }
+        // Social account attributes
+        public string issuer { set; get; }
+        public string issuerUserId { set; get; }
+
+        // Local as social account attributes
+        public string email { set; get; }
+        public string displayName { set; get; }
+        public string firstName { set; get; }
+        public string lastName { set; get; }
+        public string extension_jdrfConsId { get; set; }
     }
 }

@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AADB2C.GraphService", "AADB
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AADB2C.UserMigration.API", "AADB2C.UserMigration.API\AADB2C.UserMigration.API.csproj", "{77B97149-82CF-4668-A83C-2B974720034F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AADB2C.UserAdmin", "AADB2C.UserAdmin\AADB2C.UserAdmin.csproj", "{78908CDA-025C-4547-B180-9253B197871C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{77B97149-82CF-4668-A83C-2B974720034F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77B97149-82CF-4668-A83C-2B974720034F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77B97149-82CF-4668-A83C-2B974720034F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{78908CDA-025C-4547-B180-9253B197871C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78908CDA-025C-4547-B180-9253B197871C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78908CDA-025C-4547-B180-9253B197871C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78908CDA-025C-4547-B180-9253B197871C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

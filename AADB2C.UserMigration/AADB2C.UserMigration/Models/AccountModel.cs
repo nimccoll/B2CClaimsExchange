@@ -1,9 +1,15 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿//===============================================================================
+// Microsoft FastTrack for Azure
+// Azure Active Directory B2C User Management Samples
+//===============================================================================
+// Copyright © Microsoft Corporation.  All rights reserved.
+// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+// OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+// LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+// FITNESS FOR A PARTICULAR PURPOSE.
+//===============================================================================
+using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AADB2C.UserMigration.Models
 {
@@ -22,7 +28,7 @@ namespace AADB2C.UserMigration.Models
         /// </summary>
         public static LocalAccountsModel Parse(string JSON)
         {
-            return  JsonConvert.DeserializeObject(JSON, typeof(LocalAccountsModel)) as LocalAccountsModel;
+            return JsonConvert.DeserializeObject(JSON, typeof(LocalAccountsModel)) as LocalAccountsModel;
         }
         /// <summary>
         /// Serialize the object into Json string
@@ -47,5 +53,6 @@ namespace AADB2C.UserMigration.Models
         public string displayName { set; get; }
         public string firstName { set; get; }
         public string lastName { set; get; }
+        public string extension_jdrfConsId { get; set; }
     }
 }
